@@ -1,0 +1,8 @@
+location:
+  name: New York, United States
+  latitude: 40.7128
+  longitude: -74.0060
+  timezone: America/New_York
+data_dir: data
+archive_dir: data/archive
+database_url: sqlite:///data/daily-press.db

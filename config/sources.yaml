@@ -1,0 +1,19 @@
+sources:
+  - name: Reuters
+    url: https://feeds.reuters.com/reuters/topNews
+    section: top
+  - name: AP
+    url: https://apnews.com/hub/ap-top-news
+    section: top
+  - name: NASA
+    url: https://www.nasa.gov/news-release/feed/
+    section: aerospace-defense
+  - name: Defense One
+    url: https://www.defenseone.com/
+    section: aerospace-defense
+  - name: IEEE Spectrum
+    url: https://spectrum.ieee.org/rss/fulltext
+    section: engineering-technology
+  - name: The Register
+    url: https://www.theregister.com/headlines.atom
+    section: engineering-technology
