@@ -45,3 +45,13 @@ def test_source_is_immutable_and_requires_https() -> None:
         source.name = "Updated"
     with pytest.raises(ValidationError):
         Source(name="Reuters", url="http://www.reuters.com/", section="top")
+@pytest.mark.parametrize(
+    "url",
+    [
+        "https://example.com:invalid/feed",
+        "https://exa mple.com/feed",
+    ],
+)
+def test_source_rejects_malformed_https_urls(url: str) -> None:
+    with pytest.raises(ValidationError):
+        Source(name="Reuters", url=url, section="top")

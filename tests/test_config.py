@@ -82,3 +82,23 @@ def test_config_directory_uses_repository_fallback(
     monkeypatch.delenv("DAILY_PRESS_CONFIG_DIR", raising=False)
 
     assert config_directory().name == "config"
+def test_load_settings_reads_openai_api_key_from_dotenv(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    monkeypatch.chdir(tmp_path)
+    (tmp_path / ".env").write_text("OPENAI_API_KEY=test-secret\n", encoding="utf-8")
+    settings_path = tmp_path / "settings.yaml"
+    settings_path.write_text(
+        "location:\n"
+        "  name: New York, United States\n"
+        "  latitude: 40.7128\n"
+        "  longitude: -74.0060\n"
+        "  timezone: America/New_York\n",
+        encoding="utf-8",
+    )
+    (tmp_path / "sources.yaml").write_text("sources: []\n", encoding="utf-8")
+
+    settings = load_settings(settings_path)
+
+    assert settings.openai_api_key is not None
+    assert settings.openai_api_key.get_secret_value() == "test-secret"

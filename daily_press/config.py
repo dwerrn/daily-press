@@ -3,6 +3,7 @@ from pathlib import Path
 from typing import Any
 
 import yaml
+from pydantic import SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 from daily_press.models import Source
@@ -33,6 +34,7 @@ class Settings(BaseSettings):
     data_dir: str = "data"
     archive_dir: str = "data/archive"
     database_url: str = "sqlite:///data/daily-press.db"
+    openai_api_key: SecretStr | None = None
     sources: tuple[Source, ...] = ()
 
 

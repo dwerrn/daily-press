@@ -14,9 +14,16 @@ class Source(BaseModel):
     @field_validator("url")
     @classmethod
     def url_must_use_https(cls, value: str) -> str:
+        if value != value.strip():
+            raise ValueError("source URL must not contain surrounding whitespace")
         parsed = urlsplit(value)
-        if parsed.scheme.lower() != "https" or not parsed.hostname:
-            raise ValueError("source URL must use HTTPS")
+        hostname = parsed.hostname
+        try:
+            parsed.port
+        except ValueError as error:
+            raise ValueError("source URL must contain a valid port") from error
+        if parsed.scheme.lower() != "https" or not hostname or any(char.isspace() for char in hostname):
+            raise ValueError("source URL must be a well-formed HTTPS URL")
         return value
 
 
