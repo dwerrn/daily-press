@@ -1,0 +1,1 @@
+"""Daily Press service package."""
