@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>Example wire</title>
+    <item>
+      <title>Orbital test reaches its target</title>
+      <link>https://example.test/story/orbital-test?utm_source=rss</link>
+      <description><![CDATA[<p>A successful <strong>flight</strong> test.</p>]]></description>
+      <pubDate>Fri, 19 Sep 2026 09:30:00 -0400</pubDate>
+    </item>
+    <item>
+      <title>Second story without a date</title>
+      <link>https://example.test/story/second</link>
+      <description>Short briefing.</description>
+    </item>
+  </channel>
+</rss>

@@ -1,0 +1,15 @@
+{
+  "latitude": 40.71,
+  "longitude": -74.01,
+  "current": {
+    "time": "2026-09-19T05:30",
+    "temperature_2m": 16.4,
+    "weather_code": 2
+  },
+  "daily": {
+    "time": ["2026-09-19"],
+    "temperature_2m_max": [23.7],
+    "temperature_2m_min": [15.1],
+    "precipitation_probability_max": [35]
+  }
+}
