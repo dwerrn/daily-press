@@ -65,6 +65,7 @@ def _content_items(entries: list[feedparser.FeedParserDict], source: Source):
             published_at = _published_at(entry.get("published_parsed") or entry.get("updated_parsed"))
             yield ContentItem(
                 source=source.name,
+                source_quality=source.quality_weight,
                 section=source.section,
                 title=title,
                 url=url,

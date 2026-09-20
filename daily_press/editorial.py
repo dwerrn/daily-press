@@ -2,6 +2,7 @@
 
 from collections.abc import Iterable
 from datetime import date, timezone
+import re
 
 from daily_press.db import StoryRepository
 from daily_press.models import ContentItem
@@ -26,7 +27,15 @@ def pre_rank(
         seen_urls.add(item.canonical_url)
         candidates.append((-_score(item, edition_date, keywords), position, item))
     candidates.sort(key=lambda candidate: (candidate[0], candidate[1]))
-    return [item for _, _, item in candidates[:MAX_CANDIDATES]]
+
+    selected: list[ContentItem] = []
+    for _, _, item in candidates:
+        if any(_titles_are_similar(item.title, selected_item.title) for selected_item in selected):
+            continue
+        selected.append(item)
+        if len(selected) == MAX_CANDIDATES:
+            break
+    return selected
 
 
 def _score(item: ContentItem, edition_date: date, keywords: tuple[str, ...]) -> int:
@@ -36,4 +45,22 @@ def _score(item: ContentItem, edition_date: date, keywords: tuple[str, ...]) -> 
         recency = max(0, 14 - max(0, (edition_date - published_date).days))
     searchable_text = " ".join((item.source, item.section, item.title, item.summary)).casefold()
     relevance = sum(keyword in searchable_text for keyword in keywords)
-    return recency + relevance * 20
+    return recency + relevance * 20 + item.source_quality
+
+
+def _titles_are_similar(left: str, right: str) -> bool:
+    normalized_left = _normalize_title(left)
+    normalized_right = _normalize_title(right)
+    if normalized_left == normalized_right:
+        return True
+    left_tokens = set(normalized_left.split())
+    right_tokens = set(normalized_right.split())
+    if not left_tokens or not right_tokens:
+        return False
+    token_similarity = len(left_tokens & right_tokens) / len(left_tokens | right_tokens)
+    return token_similarity >= 0.8
+
+
+def _normalize_title(title: str) -> str:
+    tokens = re.findall(r"[\w]+", title.casefold())
+    return " ".join(token for token in tokens if token not in {"a", "an", "the"})

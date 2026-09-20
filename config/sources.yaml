@@ -2,17 +2,22 @@ sources:
   - name: Reuters
     url: https://feeds.reuters.com/reuters/topNews
     section: top
+    quality_weight: 8
   # AP News no longer publishes a public RSS/Atom feed. Re-enable only after
   # choosing and reviewing an authorized feed integration.
   - name: NASA
     url: https://www.nasa.gov/news-release/feed/
     section: aerospace-defense
+    quality_weight: 7
   - name: Defense One
     url: https://www.defenseone.com/rss/all/
     section: aerospace-defense
+    quality_weight: 7
   - name: IEEE Spectrum
     url: https://spectrum.ieee.org/rss/fulltext
     section: engineering-technology
+    quality_weight: 7
   - name: The Register
     url: https://www.theregister.com/headlines.atom
     section: engineering-technology
+    quality_weight: 6
