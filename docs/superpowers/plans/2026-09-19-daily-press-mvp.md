@@ -227,7 +227,7 @@ Commit: `git add daily_press tests && git commit -m "feat: add story memory and 
 **Files:**
 - Create: `daily_press/openai_editor.py`, `tests/test_openai_editor.py`
 
-- [ ] **Step 1: Write failing editor contract test.**
+- [x] **Step 1: Write failing editor contract test.**
 
 ```python
 def test_editor_returns_three_source_attributed_stories(fake_openai) -> None:
@@ -236,13 +236,13 @@ def test_editor_returns_three_source_attributed_stories(fake_openai) -> None:
     assert edition.top_stories[0].source == "Reuters"
 ```
 
-- [ ] **Step 2: Run the test and confirm the editor is missing.**
+- [x] **Step 2: Run the test and confirm the editor is missing.**
 
 Run: `uv run --extra dev pytest tests/test_openai_editor.py -q`
 
 Expected: FAIL with import error.
 
-- [ ] **Step 3: Implement structured editorial selection.**
+- [x] **Step 3: Implement structured editorial selection.**
 
 Send only the pre-ranked source, title, URL, excerpt, section, and date to `gpt-5-mini` through the OpenAI Responses API. Require JSON matching `EditionSelection`. Validate returned indices and source attribution. On absent API key, invalid model response, or API error, select the top deterministic candidates and write summaries from source excerpts; record the degraded mode in the run.
 
@@ -251,6 +251,8 @@ Send only the pre-ranked source, title, URL, excerpt, section, and date to `gpt-
 Run: `uv run --extra dev pytest tests/test_openai_editor.py -q`
 
 Expected: all pass with a fake client and no API call.
+
+Tests pass; commit remains pending explicit authorization.
 
 Commit: `git add daily_press tests && git commit -m "feat: add OpenAI editorial selection"`
 

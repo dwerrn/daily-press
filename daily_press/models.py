@@ -1,4 +1,5 @@
 from datetime import datetime, timezone
+from typing import Literal
 from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
@@ -66,6 +67,34 @@ class ContentItem(BaseModel):
             key=lambda item: item[0],
         )
         return urlunsplit((scheme, netloc, parsed.path or "/", urlencode(query, doseq=True), ""))
+
+
+class EditionStory(BaseModel):
+    """A source-attributed story selected for a rendered edition."""
+
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    candidate_index: int = Field(ge=0)
+    source: str = Field(min_length=1, max_length=120)
+    title: str = Field(min_length=1, max_length=500)
+    url: str = Field(min_length=1, max_length=2048)
+    summary: str = Field(default="", max_length=600)
+    section: str = Field(min_length=1, max_length=120)
+
+
+class EditionSelection(BaseModel):
+    """The editorial output consumed by rendering and archive generation."""
+
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    top_stories: list[EditionStory] = Field(default_factory=list, max_length=3)
+    radar_stories: list[EditionStory] = Field(default_factory=list, max_length=2)
+    mode: Literal["openai", "deterministic"] = "openai"
+    degraded_reason: str | None = Field(default=None, max_length=160)
+
+    @property
+    def degraded(self) -> bool:
+        return self.mode == "deterministic"
 
 
 def _validate_absolute_https_url(value: str) -> None:
