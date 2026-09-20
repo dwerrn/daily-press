@@ -20,7 +20,7 @@ class WeatherForecast(BaseModel):
 
 
 def collect_weather(
-    latitude: float, longitude: float, *, client: httpx.Client | None = None
+    latitude: float, longitude: float, timezone: str, *, client: httpx.Client | None = None
 ) -> WeatherForecast:
     """Fetch the current and daily forecast from Open-Meteo."""
     owns_client = client is None
@@ -32,6 +32,7 @@ def collect_weather(
                 "latitude": latitude,
                 "longitude": longitude,
                 "current": "temperature_2m,weather_code",
+                "timezone": timezone,
                 "daily": "temperature_2m_max,temperature_2m_min,precipitation_probability_max",
             },
             headers={"User-Agent": USER_AGENT},

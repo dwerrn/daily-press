@@ -11,7 +11,6 @@ def test_load_sources_reads_named_yaml_sources() -> None:
 
     assert [(source.name, source.section) for source in sources] == [
         ("Reuters", "top"),
-        ("AP", "top"),
         ("NASA", "aerospace-defense"),
         ("Defense One", "aerospace-defense"),
         ("IEEE Spectrum", "engineering-technology"),

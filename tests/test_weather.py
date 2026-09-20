@@ -21,7 +21,7 @@ def test_collect_weather_maps_open_meteo_forecast() -> None:
 
     client = httpx.Client(transport=httpx.MockTransport(handler))
 
-    forecast = collect_weather(40.7128, -74.0060, client=client)
+    forecast = collect_weather(40.7128, -74.0060, "America/New_York", client=client)
 
     assert forecast == WeatherForecast(
         current_temperature_c=16.4,
@@ -46,4 +46,4 @@ def test_collect_weather_wraps_http_failures_as_collector_errors() -> None:
     )
 
     with pytest.raises(CollectorError, match="weather"):
-        collect_weather(40.7128, -74.0060, client=client)
+        collect_weather(40.7128, -74.0060, "America/New_York", client=client)
