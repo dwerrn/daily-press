@@ -261,7 +261,7 @@ Commit: `git add daily_press tests && git commit -m "feat: add OpenAI editorial 
 **Files:**
 - Create: `daily_press/rendering.py`, `templates/edition.html`, `static/edition.css`, `tests/test_rendering.py`
 
-- [ ] **Step 1: Write failing HTML/PDF rendering test.**
+- [x] **Step 1: Write failing HTML/PDF rendering test.**
 
 ```python
 def test_renderer_writes_letter_pdf(tmp_path, sample_edition) -> None:
@@ -276,7 +276,9 @@ Run: `uv run --extra dev pytest tests/test_rendering.py -q`
 
 Expected: FAIL because `Renderer` is absent.
 
-- [ ] **Step 3: Implement Jinja and Playwright rendering.**
+Initial pre-implementation failure check was not run; the focused renderer tests now pass.
+
+- [x] **Step 3: Implement Jinja and Playwright rendering.**
 
 Render `edition.html` with date, weather, three top stories, and two radar stories. In `edition.css`, set `@page { size: Letter; margin: 0.35in; }`, compact serif typography, three columns, black rules, and print color adjustment. Launch Chromium with Playwright, call `page.pdf(format="Letter", print_background=True)`, and close the browser in `finally`.
 
@@ -286,6 +288,8 @@ Run: `uv run --extra dev pytest tests/test_rendering.py -q`
 
 Expected: a valid fixture-driven PDF is written.
 
+Renderer tests pass; commit remains pending explicit authorization.
+
 Commit: `git add daily_press templates static tests && git commit -m "feat: render Daily Press PDF editions"`
 
 ### Task 7: Orchestrate generation and expose archive operations
@@ -294,7 +298,7 @@ Commit: `git add daily_press templates static tests && git commit -m "feat: rend
 - Create: `daily_press/generator.py`, `daily_press/cli.py`, `tests/test_generation.py`, `tests/test_archive_api.py`
 - Modify: `daily_press/main.py`
 
-- [ ] **Step 1: Write failing end-to-end generation and archive tests.**
+- [x] **Step 1: Write failing end-to-end generation and archive tests.**
 
 ```python
 async def test_generation_archives_partial_edition_when_one_source_fails(generator) -> None:
@@ -316,15 +320,17 @@ Run: `uv run --extra dev pytest tests/test_generation.py tests/test_archive_api.
 
 Expected: FAIL because generation and archive routes are absent.
 
-- [ ] **Step 3: Implement a locked generation path.**
+- [x] **Step 3: Implement a locked generation path.**
 
 `EditionGenerator.generate()` uses `filelock.FileLock`, collects each source with `asyncio.gather(..., return_exceptions=True)`, records source errors, calls ranking/editor/rendering, and creates `data/archive/YYYY-MM-DD/{edition.html,daily-press.pdf}`. Add `GET /`, `GET /editions/{date}`, `GET /editions/{date}/pdf`, and `POST /editions/generate`. The CLI must call this same service, not duplicate logic.
+
+The implementation uses async gather over the existing synchronous collectors; this keeps the shared path deterministic in the single-user service and avoids a thread-dependent runtime requirement.
 
 - [ ] **Step 4: Re-run tests and commit.**
 
 Run: `uv run --extra dev pytest tests/test_generation.py tests/test_archive_api.py -q`
 
-Expected: all pass and prove partial editions continue to archive.
+Focused generation and archive tests pass; the repository's existing health test remains blocked by the managed sandbox's TestClient thread limitation. Commit remains pending explicit authorization.
 
 Commit: `git add daily_press tests && git commit -m "feat: generate and serve archived editions"`
 

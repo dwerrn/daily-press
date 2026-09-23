@@ -1,0 +1,160 @@
+@page {
+  size: Letter;
+  margin: 0.35in;
+}
+
+:root {
+  color: #111;
+  background: #fff;
+  font-family: Georgia, "Times New Roman", serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-size: 10.5pt;
+  line-height: 1.28;
+  print-color-adjust: exact;
+  -webkit-print-color-adjust: exact;
+}
+
+.masthead {
+  border-bottom: 3px solid #111;
+  padding-bottom: 0.08in;
+  text-align: center;
+}
+
+.publication {
+  font-size: 27pt;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  line-height: 1;
+}
+
+.edition-line {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 0.08in;
+  font-size: 8.5pt;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.weather {
+  border-bottom: 1px solid #111;
+  padding: 0.11in 0;
+}
+
+.weather-label,
+.story-source {
+  font-size: 7.5pt;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.weather-main {
+  align-items: baseline;
+  display: flex;
+  gap: 0.12in;
+  margin-top: 0.03in;
+}
+
+.weather-main strong {
+  font-size: 18pt;
+}
+
+.weather-details,
+.small-note,
+.footer {
+  color: #444;
+  font-size: 8.5pt;
+}
+
+.content-grid {
+  display: grid;
+  gap: 0.18in;
+  grid-template-columns: 0.9fr 2fr 1.15fr;
+  margin-top: 0.15in;
+}
+
+.content-grid > * + * {
+  border-left: 1px solid #111;
+  padding-left: 0.16in;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin-top: 0;
+}
+
+h1 {
+  border-bottom: 2px solid #111;
+  font-size: 17pt;
+  line-height: 1.05;
+  margin-bottom: 0.1in;
+  padding-bottom: 0.04in;
+}
+
+.briefing-column h2,
+.radar-column > h2 {
+  border-bottom: 1px solid #111;
+  font-size: 11pt;
+  line-height: 1.1;
+  margin-bottom: 0.1in;
+  padding-bottom: 0.04in;
+}
+
+.briefing-column p {
+  font-size: 9pt;
+}
+
+.story {
+  break-inside: avoid;
+  border-bottom: 1px solid #999;
+  margin-bottom: 0.12in;
+  padding-bottom: 0.1in;
+}
+
+.story h2 {
+  font-size: 15pt;
+  line-height: 1.05;
+  margin: 0.03in 0 0.05in;
+}
+
+.story h3 {
+  font-size: 11pt;
+  line-height: 1.1;
+  margin: 0.03in 0 0.05in;
+}
+
+.story p {
+  margin-bottom: 0.05in;
+}
+
+.story a {
+  color: #111;
+  font-size: 8pt;
+  text-decoration: underline;
+}
+
+.rule {
+  border-top: 1px solid #111;
+  margin: 0.15in 0;
+}
+
+.empty-state {
+  font-style: italic;
+}
+
+.footer {
+  border-top: 1px solid #111;
+  margin-top: 0.12in;
+  padding-top: 0.05in;
+  text-align: center;
+}

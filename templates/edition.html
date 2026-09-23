@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Daily Press — {{ edition.edition_date }}</title>
+    <style>{{ css|safe }}</style>
+  </head>
+  <body>
+    <header class="masthead">
+      <div class="publication">THE DAILY PRESS</div>
+      <div class="edition-line">
+        <span>{{ edition.location_name }}</span>
+        <time datetime="{{ edition.edition_date.isoformat() }}">{{ edition.edition_date.strftime("%A, %B %-d, %Y") }}</time>
+      </div>
+    </header>
+
+    <section class="weather" aria-label="Today's weather">
+      <div class="weather-label">TODAY'S WEATHER</div>
+      {% if edition.weather %}
+        <div class="weather-main">
+          <strong>{{ "%.0f"|format(edition.weather.current_temperature_c * 9 / 5 + 32) }}°F</strong>
+          <span>{{ edition.weather.condition }}</span>
+        </div>
+        <div class="weather-details">
+          High {{ "%.0f"|format(edition.weather.high_temperature_c * 9 / 5 + 32) }}° ·
+          Low {{ "%.0f"|format(edition.weather.low_temperature_c * 9 / 5 + 32) }}° ·
+          Rain {{ edition.weather.precipitation_probability }}%
+        </div>
+      {% else %}
+        <div class="weather-main"><strong>Weather unavailable</strong></div>
+      {% endif %}
+    </section>
+
+    <main class="content-grid">
+      <aside class="briefing-column">
+        <h2>Morning Briefing</h2>
+        <p>Selected for consequence, clarity, and useful context for the day ahead.</p>
+        <div class="rule"></div>
+        <p class="small-note">Sources accompany every story. Links point to the original reporting.</p>
+      </aside>
+
+      <section class="top-column" aria-labelledby="top-stories-heading">
+        <h1 id="top-stories-heading">The Day's News</h1>
+        {% for story in edition.top_stories %}
+          <article class="story top-story">
+            <div class="story-source">{{ story.source }}</div>
+            <h2>{{ story.title }}</h2>
+            <p>{{ story.summary }}</p>
+            <a href="{{ story.url }}">Read source</a>
+          </article>
+        {% else %}
+          <p class="empty-state">No top stories were available.</p>
+        {% endfor %}
+      </section>
+
+      <aside class="radar-column" aria-labelledby="radar-heading">
+        <h2 id="radar-heading">Engineering &amp; Defense Radar</h2>
+        {% for story in edition.radar_stories %}
+          <article class="story radar-story">
+            <div class="story-source">{{ story.source }}</div>
+            <h3>{{ story.title }}</h3>
+            <p>{{ story.summary }}</p>
+            <a href="{{ story.url }}">Read source</a>
+          </article>
+        {% else %}
+          <p class="empty-state">No radar stories were available.</p>
+        {% endfor %}
+      </aside>
+    </main>
+
+    <footer class="footer">Daily Press · Personal edition · {{ edition.edition_date }}</footer>
+  </body>
+</html>

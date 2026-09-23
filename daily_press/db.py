@@ -59,7 +59,9 @@ class StoryRepository:
     """A small, synchronous repository for the daily generation workflow."""
 
     def __init__(self, database: str | Path) -> None:
-        self.engine = create_engine(_database_url(database))
+        database_url = _database_url(database)
+        _ensure_sqlite_parent(database_url)
+        self.engine = create_engine(database_url)
         event.listen(self.engine, "connect", _enable_foreign_keys)
         metadata.create_all(self.engine)
 
@@ -169,11 +171,57 @@ class StoryRepository:
                 for row in rows
             ]
 
+    def start_run(self, started_at: datetime | None = None) -> int:
+        """Record the beginning of a generation attempt."""
+        with self.engine.begin() as connection:
+            result = connection.execute(
+                runs.insert().values(
+                    started_at=_as_utc(started_at or datetime.now(timezone.utc)),
+                    status="running",
+                )
+            )
+            run_id = result.inserted_primary_key[0]
+            if run_id is None:
+                raise RuntimeError("run insertion did not produce a row")
+            return int(run_id)
+
+    def finish_run(self, run_id: int, status: str) -> None:
+        """Set a run's terminal status without exposing provider details."""
+        if status not in {"complete", "partial", "failed"}:
+            raise ValueError("unsupported run status")
+        with self.engine.begin() as connection:
+            connection.execute(runs.update().where(runs.c.id == run_id).values(status=status))
+
+    def latest_run(self) -> dict[str, object] | None:
+        """Return the latest run summary for the archive index."""
+        with self.engine.connect() as connection:
+            row = connection.execute(
+                select(runs.c.id, runs.c.started_at, runs.c.status)
+                .order_by(runs.c.id.desc())
+                .limit(1)
+            ).first()
+        if row is None:
+            return None
+        started_at = _as_utc(row.started_at)
+        return {
+            "id": row.id,
+            "started_at": started_at.isoformat() if started_at else None,
+            "status": row.status,
+        }
+
 
 def _database_url(database: str | Path) -> str:
     if isinstance(database, Path):
         return f"sqlite:///{database}"
     return database if "://" in database else f"sqlite:///{database}"
+
+
+def _ensure_sqlite_parent(database_url: str) -> None:
+    if not database_url.startswith("sqlite:///"):
+        return
+    database_path = Path(database_url.removeprefix("sqlite:///"))
+    if database_path.name and database_path.name != ":memory:":
+        database_path.parent.mkdir(parents=True, exist_ok=True)
 
 
 def _as_utc(value: datetime | None) -> datetime | None:

@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 from typing import Literal
 from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 
@@ -81,6 +81,12 @@ class EditionStory(BaseModel):
     summary: str = Field(default="", max_length=600)
     section: str = Field(min_length=1, max_length=120)
 
+    @field_validator("url")
+    @classmethod
+    def url_must_be_an_absolute_https_article_url(cls, value: str) -> str:
+        _validate_absolute_https_url(value)
+        return value
+
 
 class EditionSelection(BaseModel):
     """The editorial output consumed by rendering and archive generation."""
@@ -95,6 +101,30 @@ class EditionSelection(BaseModel):
     @property
     def degraded(self) -> bool:
         return self.mode == "deterministic"
+
+
+class WeatherForecast(BaseModel):
+    """Weather values rendered in an edition header."""
+
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    current_temperature_c: float
+    high_temperature_c: float
+    low_temperature_c: float
+    precipitation_probability: int = Field(ge=0, le=100)
+    condition: str = Field(min_length=1, max_length=80)
+
+
+class Edition(BaseModel):
+    """Complete print-ready edition context."""
+
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    edition_date: date
+    location_name: str = Field(min_length=1, max_length=160)
+    weather: WeatherForecast | None = None
+    top_stories: list[EditionStory] = Field(default_factory=list, max_length=3)
+    radar_stories: list[EditionStory] = Field(default_factory=list, max_length=2)
 
 
 def _validate_absolute_https_url(value: str) -> None:

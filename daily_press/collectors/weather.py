@@ -1,22 +1,12 @@
 import httpx
-from pydantic import BaseModel, ConfigDict
 
 from daily_press.collectors import CollectorError
+from daily_press.models import WeatherForecast
 
 
 FORECAST_URL = "https://api.open-meteo.com/v1/forecast"
 REQUEST_TIMEOUT = httpx.Timeout(10.0, connect=5.0)
 USER_AGENT = "Daily Press/0.1 (+https://daily-press.local)"
-
-
-class WeatherForecast(BaseModel):
-    model_config = ConfigDict(frozen=True)
-
-    current_temperature_c: float
-    high_temperature_c: float
-    low_temperature_c: float
-    precipitation_probability: int
-    condition: str
 
 
 def collect_weather(
