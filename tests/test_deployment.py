@@ -49,3 +49,24 @@ def test_deployment_scripts_are_executable_and_preserve_secrets() -> None:
     assert 'install -d -o root -g root -m 0700 "${APP_DIR}/.releases/backups"' in install
     assert '"${APP_DIR}/data/backups"' not in install
     assert "missing ${APP_DIR}/.env" in deploy
+
+
+def test_ci_workflow_runs_project_suite_on_main_and_pull_requests() -> None:
+    workflow = yaml.safe_load((ROOT / ".github/workflows/ci.yml").read_text(encoding="utf-8"))
+
+    assert workflow["name"] == "CI"
+    assert workflow[True] == {"pull_request": {}, "push": {"branches": ["main"]}}
+    assert workflow["permissions"] == {"contents": "read"}
+    job = workflow["jobs"]["test"]
+    assert job["runs-on"] == "ubuntu-latest"
+    assert job["steps"] == [
+        {"uses": "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683"},
+        {
+            "uses": "actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+            "with": {"python-version": "3.13"},
+        },
+        {"run": "python -m pip install --upgrade pip"},
+        {"run": "python -m pip install \".[dev]\""},
+        {"run": "python -m playwright install --with-deps chromium"},
+        {"run": "python -m pytest -q"},
+    ]
