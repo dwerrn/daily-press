@@ -10,6 +10,12 @@ from daily_press.models import ContentItem, Source, WeatherForecast
 
 class FakeRenderer:
     def render_pdf(self, edition, output_dir: Path) -> Path:
+        try:
+            asyncio.get_running_loop()
+        except RuntimeError:
+            pass
+        else:
+            raise AssertionError("sync renderer must run outside the event loop")
         del edition
         output_dir.mkdir(parents=True, exist_ok=True)
         (output_dir / "edition.html").write_text("<html>edition</html>", encoding="utf-8")

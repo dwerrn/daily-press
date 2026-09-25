@@ -1,0 +1,10 @@
+[Unit]
+Description=Generate the Daily Press edition
+Requires=daily-press.service
+After=daily-press.service
+
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/daily-press
+ExecStart=/usr/bin/docker compose run --rm daily-press daily-press generate
+TimeoutStartSec=0

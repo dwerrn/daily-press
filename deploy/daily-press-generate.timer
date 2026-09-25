@@ -1,0 +1,11 @@
+[Unit]
+Description=Daily Press morning generation timer
+
+[Timer]
+OnCalendar=*-*-* 05:30:00 America/New_York
+Persistent=true
+RandomizedDelaySec=300
+Unit=daily-press-generate.service
+
+[Install]
+WantedBy=timers.target

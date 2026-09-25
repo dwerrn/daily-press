@@ -54,3 +54,20 @@ def test_collect_rss_wraps_http_failures_as_collector_errors() -> None:
 
     with pytest.raises(CollectorError, match="Example Wire"):
         collect_rss(source, client=client)
+
+
+def test_collect_rss_follows_redirects() -> None:
+    source = Source(name="Example Wire", url="https://feeds.example.test/latest.xml", section="top")
+    redirect_url = "https://feeds.example.test/current.xml"
+
+    def respond(request: httpx.Request) -> httpx.Response:
+        if str(request.url) == source.url:
+            return httpx.Response(301, headers={"Location": redirect_url}, request=request)
+        return httpx.Response(200, content=(FIXTURES / "rss.xml").read_bytes(), request=request)
+
+    client = httpx.Client(transport=httpx.MockTransport(respond))
+
+    assert [item.title for item in collect_rss(source, client=client)] == [
+        "Orbital test reaches its target",
+        "Second story without a date",
+    ]

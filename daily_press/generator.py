@@ -128,7 +128,7 @@ class EditionGenerator:
                 radar_stories=selection.radar_stories,
             )
             output_dir = self.archive_dir / edition_date.isoformat()
-            pdf_path = self.renderer.render_pdf(edition, output_dir)
+            pdf_path = await asyncio.to_thread(self.renderer.render_pdf, edition, output_dir)
             html_path = output_dir / "edition.html"
             for story in (*selection.top_stories, *selection.radar_stories):
                 self.repository.record_printed(candidates[story.candidate_index], edition_date)

@@ -43,6 +43,7 @@ def _fetch_response_content(client: httpx.Client, source: Source) -> bytes:
         source.url,
         headers={"User-Agent": USER_AGENT},
         timeout=REQUEST_TIMEOUT,
+        follow_redirects=True,
     ) as response:
         response.raise_for_status()
         chunks: list[bytes] = []
